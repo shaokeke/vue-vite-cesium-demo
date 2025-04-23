@@ -7,7 +7,7 @@ const setting = {
   SFTP_PORT: 22, // default 22
   SFTP_USER: 'root', // user
   SFTP_PASSWORD: '123456', // password
-  SFTP_DIST_PATH: '../home/nginx_test/html' // relative path
+  SFTP_DIST_PATH: '../home/nginx_test/html', // relative path
 }
 
 if (typeof window === 'object') {
