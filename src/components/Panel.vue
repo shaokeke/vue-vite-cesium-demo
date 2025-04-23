@@ -27,101 +27,122 @@
 import {
   ref, reactive, watchEffect
 } from 'vue'
+import { $t } from '@/cesiumUtils/i18n'
 
 const btns = reactive([
   {
-    label: '操作',
+    label: $t('Operations'),
     contents: [
       {
         id: 'billboard',
-        label: '生成大量节点'
+        label: $t('Generate nodes')
       },
       {
         id: 'sat',
-        label: '显示卫星'
+        label: $t('Satellite display')
       },
       {
         id: 'vision',
-        label: '可视域分析'
+        label: $t('Visual field analysis')
       },
       {
         id: 'visionAnalysis',
-        label: '通视度分析'
+        label: $t('Intervisibility analysis')
+      },
+      {
+        id: 'spreadWall',
+        label: $t('Spread wall')
       },
       {
         id: 'geojson',
-        label: '加载geojson'
+        label: $t('Geojson Load')
+      },
+      {
+        id: 'tilesetFlow',
+        label: $t('Tileset Flow')
       },
       {
         id: 'terrain',
-        label: '显示地形'
+        label: $t('Terrain')
       },
       {
         id: 'spreadEllipse',
-        label: '高危报警'
+        label: $t('High risk alarm')
       },
       {
         id: 'scan',
-        label: '地面雷达'
+        label: $t('Ground radar')
       },
       {
         id: 'flyline',
-        label: '地图通联'
+        label: $t('Line link')
       },
       {
         id: 'radarStatic',
-        label: '菲涅尔区'
+        label: $t('Fresnel zone')
       },
       {
         id: 'radarDynamic',
-        label: '对空雷达'
+        label: $t('Air radar')
       },
       {
         id: 'riverFlood',
-        label: '河流淹没'
+        label: $t('River inundation')
       },
       {
         id: 'riverDynamic',
-        label: '动态河流'
+        label: $t('Dynamic river')
+      },
+      {
+        id: 'trackPlane',
+        label: $t('Tracking scan')
+      },
+      {
+        id: 'whiteBuild',
+        label: $t('white build')
+      },
+      {
+        id: 'addEcharts',
+        label: $t('combine Echarts')
       }
     ]
   },
   {
-    label: '天气',
+    label: $t('Weather'),
     contents: [
       {
         id: 'rain',
-        label: '雨天'
+        label: $t('Rainy')
       },
       {
         id: 'snow',
-        label: '下雪'
+        label: $t('Snowy')
       },
       {
         id: 'fog',
-        label: '雾天'
+        label: $t('Foggy')
       }
     ]
   },
   {
-    label: '演示',
+    label: $t('Flight demonstration'),
     exclusive: true,
     contents: [
       {
         id: 'direct',
-        label: '直飞'
+        label: $t('Fly directly')
       },
       {
         id: 'round',
-        label: '绕飞'
+        label: $t('Diversion')
       },
       {
         id: 'circle',
-        label: '盘旋'
+        label: $t('Circle around')
       },
       {
         id: 'drone',
-        label: '无人机侦测(视频推流)'
+        label: $t('UAV detection (video streaming)')
       }
     ]
   }
@@ -132,7 +153,7 @@ const emits = defineEmits(['update:visible', 'btnClick'])
 const props = defineProps({
   title: {
     type: String,
-    default: '菜单'
+    default: $t('menus')
   },
   width: {
     type: String,
@@ -178,7 +199,7 @@ const clickHandler = (thisBtn, group) => {
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  width: 200px;
+  width: 250px;
   height: auto;
   background: rgba(0, 0, 0, 0.4);
   transition: right 0.24s ease-in-out;
@@ -188,7 +209,7 @@ const clickHandler = (thisBtn, group) => {
   display: flex;
   flex-direction: column;
   &.hide {
-    right: -200px;
+    right: -250px;
   }
   .panel {
     flex: 1;

@@ -1,8 +1,8 @@
 # vue-vite-cesium-demo
-[中文](./README.md) / [English](./README-EN.md)
+[CN 中文](./README.md) / [EN English](./README-EN.md)
 
-本demo项目使用Vue.js（v3.0）、Vite、Cesium.js进行开发，解决了市面上没有这几个框架同时出现的痛点。本项目有大量现成的解决方案，可根据自己情况使用，在使用之前请阅读并遵循LICENSE协议。
-## 项目包含一下功能
+本demo项目使用Vue.js（v3.0）、Vite、Cesium.js进行开发，解决了市面上没有这几个框架同时出现的痛点。本项目有大量现成的解决方案，可根据自己情况裁剪使用，在使用之前请阅读并遵循LICENSE协议。
+## 项目包含以下功能
   -  1、生成大量节点；
   -  2、卫星与探测区域展示；
   -  3、可视域分析；
@@ -14,21 +14,35 @@
   -  9、地图动态通联展示；
   -  10、菲涅尔区展示；
   -  11、对空雷达区域展示；
-  -  12、天气展示：雨、雪、雾；
-  -  13、实时绘制飞机飞行轨迹（直飞、绕飞、盘旋）；
-  -  14、接合rtsp视频推流软件，实现无人机侦察视频实时传输图像。
+  -  12、河流淹没（要有地形才能看到效果）；
+  -  13、动态河流（要有地形才能看到效果）；
+  -  14、追踪扫描；
+  -  15、天气展示：雨、雪、雾；
+  -  16、实时绘制飞机飞行轨迹（直飞、绕飞、盘旋）；
+  -  17、扩散墙;
+  -  18、白膜建筑;
+  -  19、结合Echarts。
+  -  20、结合rtsp视频推流软件，实现无人机侦察视频实时传输图像；
 ## 预览
 <img src="https://i.ibb.co/yn50yz5/earth.jpg" width="50%" alt="preview" />
 
 <img src="https://i.ibb.co/HFgPbFB/pushing.jpg" width="50%" alt="preview" />
 
+<img src="https://i.ibb.co/x6KKxVn/jietu.png" width="50%" alt="preview" />
+
+<img src="https://i.ibb.co/7SwqVKK/xxx.png" width="50%" alt="preview" />
+
+<img src="https://i.ibb.co/yPCcMwp/yyy.png" width="50%" alt="preview" />
+
+## 在线网站
+[https://lihanqiang.github.io/vue-vite-cesium-demo/](https://lihanqiang.github.io/vue-vite-cesium-demo/)
+
 ## Demo结构
   - public
-  - > czmls
   - > geojson
   - > models
   - > plugins
-  - > Tilesets
+  - > tilesets
   - > setting.js
   - src
   - > assets
@@ -43,8 +57,13 @@
 ### 项目运行
 使用npm（也可以使用yarn）进行项目依赖安装。进入项目根目录运行下列代码：
 ```bash
-npm install or yarn
-npm run dev or yarn run dev
+npm install
+npm run dev
+```
+或者通过`yarn`：
+```bash
+yarn 
+yarn run dev
 ```
 运行: `npm run dev` 命令报下面类似错误, 在项目根目录执行命令: `node .\node_modules\esbuild\install.js`。
   ```bash
@@ -55,24 +74,36 @@ npm run dev or yarn run dev
     at Process.ChildProcess._handle.onexit (node:internal/child_process:288:12)
     at onErrorNT (node:internal/child_process:477:16)
     at processTicksAndRejections (node:internal/process/task_queues:83:21) {
-  errno: -4058,
-  path: 'H:\node_modules\\esbuild\\esbuild.exe',
-  spawnargs: [ '--service=0.12.9', '--ping' ]
-}
+    errno: -4058,
+    path: 'H:\node_modules\\esbuild\\esbuild.exe',
+    spawnargs: [ '--service=0.12.9', '--ping' ]
+  }
   ```
 ### RTSP项目运行说明
 本项目使用开源的WEB RTSP视频推流方案，下载解压缩你在网络上下载的视频推流软件，按照说明安装和部署。关注```setting.js```进行协议端口配置。也可按照我的RTSP方案进行配置：
 
-链接：https://pan.baidu.com/s/1hF95r16J3IbRfRhSdnv6kQ 
+#### 下载
+链接：https://pan.baidu.com/s/1Hovu2CRr8N7MOlKm1MsPNw?pwd=txvg
 
-提取码：amts
+#### 安装
+* 将文件解压后放置于`D:\rtsp`目录下:
+
+<img src="https://i.ibb.co/0BFtJ1z/2023-03-16-135523.png" width="50%" alt="preview" />
+
+* 首先安装`vc++lib_v2020.8.2.exe`。
+
+#### 运行
+* 以管理员身份打开`cmd`，进入`D:/rtsp/h5s-r10.8.0330.20-win64-release`目录。
+
+* 先运行`regservice.bat`，再运行`h5ss.bat`。
+
+* 点击`UAV detection (video streaming)`按钮，在界面左上角即可看到画面。
+
 ### 说明
 本项目的代码，大部分为自创（70%以上），也有少部分代码借鉴他人，如有侵权问题，请联系删除。
-### 代码滞销，帮帮我！！！
-可以的话，高抬贵手，献出您的爱心，为人类开源事业做出一点贡献，手留余香。
-#### 微信：
-<img src="https://i.ibb.co/MPFtYG8/2021-11-18-135014-QQ.png" width="50%" alt="微信" />
+### TIPS
+.env.development以及.env.production文件为开发环境和生产环境的配置文件，这里的 `VITE_BUILD_PATH_PREFIX` 变量是本系统部署时（ https://lihanqiang.github.io/vue-vite-cesium-demo/ ），因为有 `/vue-vite-cesium-demo` 的缘故，需要在引用 `/public` 静态文件时，加上`/vue-vite-cesium-demo`前缀。
 
-#### 支付宝：
-<img src="https://i.ibb.co/YdfZFw6/2021-11-18-134709.png" width="50%" alt="支付宝" />
+** 在一般情况下，你只需设置 `VITE_BUILD_PATH_PREFIX=''` ，完成后打包发布即可。**
 
+注意由于`Cesium`版本一直更替，有可能出现安装依赖报错，运行报错问题。所以在升级`Cesium`版本前，要注意`Cesium API`的变化，以免引起不必要的麻烦。

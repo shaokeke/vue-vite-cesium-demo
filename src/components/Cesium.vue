@@ -6,13 +6,16 @@
   <div class="measure-div">
     <div id="measure"></div>
   </div>
-  <!-- 实时视频流 -->
+  <!-- real-time video streaming -->
   <div class="h5videodiv" :class="{ show: videoShow }">
     <video id="h5sVideo1" class="h5video" autoplay webkit-playsinline playsinline></video>
     <div class="playpause">
       <img :src="play" alt="">
     </div>
   </div>
+  <select v-model="langModel">
+    <option v-for="l in Object.keys(lang)" :key="l" :value="l">{{ l }}</option>
+  </select>
 </template>
 
 <script setup>
@@ -22,6 +25,8 @@ import Cesium from '@/cesiumUtils/cesium'
 import play from '@/assets/play.png'
 import { initCesium } from '@/cesiumUtils/initCesium'
 import '@/cesiumUtils/flowLine'
+import '@/cesiumUtils/waveMaterial'
+import '@/cesiumUtils/wallDiffuse'
 import { setRain, setSnow, setFog } from '@/cesiumUtils/cesiumEffects'
 import SatRoaming from '@/cesiumUtils/satelliteRoaming'
 import { setScan } from '@/cesiumUtils/scan'
@@ -32,16 +37,23 @@ import { setEmitter } from '@/cesiumUtils/emitter'
 import { setRadarStaticScan } from '@/cesiumUtils/radarStaticScan'
 import { setRadarDynamicScan } from '@/cesiumUtils/radarDynamicScan'
 import ViewShed from '@/cesiumUtils/ViewShed'
+import TilesetFlow from '@/cesiumUtils/tilesetFlow'
 import * as paths from '@/assets/paths'
 import ImportPlane from '@/cesiumUtils/importPlane'
 import DrawLines from '@/cesiumUtils/drawLines'
 import { drawLinesAndAirplane, settleBaseRadarCarRadio, destoryDrone } from '@/cesiumUtils/planeRoam'
 import { addGeojson, removeGeojson } from '@/cesiumUtils/addGeojson'
+import { WallRegularDiffuse, removeWall } from '@/cesiumUtils/wallRegularDiffuse'
 import gerateSatelliteLines from '@/mocks/satellitePath'
 import { initVedeo, toggleVideo } from '@/cesiumUtils/rtsp'
 import { analysisVisible, clearLine } from '@/cesiumUtils/visionAnalysis'
 import { setRiverFlood } from '@/cesiumUtils/riverFlood'
 import { setRiverDynamic } from '@/cesiumUtils/riverDynamic'
+import { setTrackPlane } from '@/cesiumUtils/trackPalne'
+import { setWhiteBuild } from '@/cesiumUtils/whiteBuild'
+import { addEcharts } from '@/cesiumUtils/addEcharts'
+import { langRef, lang } from '@/cesiumUtils/i18n'
+
 import Measure from '@/cesiumUtils/cesiumMeasure'
 import Panel from '@/components/Panel.vue'
 
@@ -50,6 +62,7 @@ let rain
 let snow
 let fog
 let shed
+let tileset
 let direct
 let round
 let circle
@@ -58,6 +71,8 @@ let measureTool
 let viewer3D = null
 
 const addresses = []
+
+const langModel = langRef
 
 const dialogVisible = ref(true)
 const videoShow = ref(false)
@@ -84,7 +99,7 @@ const back2Home = () => {
 
 const setPlanePath = (viewer, arr, pos, addr) => {
   const plane = new ImportPlane(viewer, {
-    uri: '/models/CesiumAir.glb',
+    uri: `${import.meta.env.VITE_BUILD_PATH_PREFIX}/models/CesiumAir.glb`,
     position: arr,
     addr,
     arrPos: pos,
@@ -141,7 +156,7 @@ const btnClickHandler = (btn) => {
       caller(active, () => {
         back2Home()
         sat = new SatRoaming(viewer3D, {
-          uri: `/models/Satellite.glb`,
+          uri: `${import.meta.env.VITE_BUILD_PATH_PREFIX}/models/Satellite.glb`,
           Lines: gerateSatelliteLines(0, 0)
         })
       }, () => {
@@ -158,15 +173,22 @@ const btnClickHandler = (btn) => {
       })
       break
     }
+    case 'tilesetFlow': {
+      caller(active, () => {
+        tileset = new TilesetFlow(viewer3D)
+      }, () => {
+        back2Home()
+        tileset.clear()
+      })
+      break
+    }
     case 'visionAnalysis': {
       let timer = 0
       caller(active, () => {
         viewer3D.camera.flyTo({
           destination: Cesium.Cartesian3.fromDegrees(99.445, 25.27, 10000),
           orientation: {
-            // 指向
             heading: Cesium.Math.toRadians(0, 0),
-            // 视角
             pitch: Cesium.Math.toRadians(-90),
             roll: 0.0
           }
@@ -193,14 +215,42 @@ const btnClickHandler = (btn) => {
       })
       break
     }
+    case 'spreadWall': {
+      // open selection 'geojson' and see 'spreadWall' more clear
+      caller(active, () => {
+        const viewPosition = [116.390646, 39.9126084]
+        viewer3D.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(
+            viewPosition[0], viewPosition[1] - 0.04,
+            1000
+          ),
+          orientation: {
+            heading: Cesium.Math.toRadians(0, 0),
+            pitch: Cesium.Math.toRadians(-20),
+            roll: 0.0
+          }
+        })
+        WallRegularDiffuse({
+          viewer: viewer3D,
+          center: viewPosition,
+          radius: 400.0,
+          edge: 50,
+          height: 50.0,
+          speed: 15,
+          minRidus: 100
+        })
+      }, () => {
+        back2Home()
+        removeWall(viewer3D)
+      })
+      break
+    }
     case 'terrain': {
       if (active) {
         viewer3D.camera.flyTo({
           destination: Cesium.Cartesian3.fromDegrees(99.5, 25.2, 10000),
           orientation: {
-          // 指向
             heading: Cesium.Math.toRadians(0, 0),
-            // 视角
             pitch: Cesium.Math.toRadians(-25),
             roll: 0.0
           }
@@ -319,6 +369,19 @@ const btnClickHandler = (btn) => {
       setRiverDynamic(viewer3D, active)
       break
     }
+    case 'trackPlane': {
+      back2Home()
+      setTrackPlane(viewer3D, active)
+      break
+    }
+    case 'whiteBuild': {
+      setWhiteBuild(viewer3D, active)
+      break
+    }
+    case 'addEcharts': {
+      addEcharts(viewer3D, active)
+      break
+    }
     default: break
   }
 }
@@ -369,7 +432,7 @@ onMounted(() => {
 <style lang="scss">
 .measure-div{
   position: absolute;
-  right: 115px;
+  right: 181px;
   top: 7px;
   z-index: 1;
   .op-btn{
@@ -387,6 +450,27 @@ onMounted(() => {
       background: #48b;
       border-color: #aef;
     }
+  }
+}
+select {
+  position: fixed;
+  right: 120px;
+  top: 7px;
+  z-index: 1;
+  width: 60px;
+  height: 32px;
+  border-radius: 4px;
+  background: #303336;
+  border: 1px solid #444;
+  color: #edffff;
+  cursor: pointer;
+  &:hover {
+    background: #48b;
+    border-color: #aef;
+    box-shadow: 0 0 8px #fff;
+  }
+  &:focus-visible {
+    outline: 0;
   }
 }
 </style>

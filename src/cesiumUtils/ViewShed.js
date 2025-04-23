@@ -24,8 +24,7 @@ function getPitch(fromPosition, toPosition) {
 }
 
 /**
- * 可视域分析。
- *
+ * ViewShedStage
  * @author Jack
  * @alias ViewShedStage
  * @class
@@ -187,19 +186,16 @@ export default class ViewShed {
   // 加载三维模型
   addTileSet() {
     const tileset = this.viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-      url: '/tilesets/Tileset/tileset.json'
+      url: `${import.meta.env.VITE_BUILD_PATH_PREFIX}/tilesets/buildings/tileset.json`
     }))
 
-    // tileset.readyPromise.then((tl) => {
-    // this.viewer.flyTo(tl, new Cesium.HeadingPitchRange(0.5, -0.2, tileset.boundingSphere.radius * 1))
-    // })
     this.viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(
         ...viewPosition,
         10
       ),
       orientation: {
-      // 指向
+        // 指向
         heading: Cesium.Math.toRadians(0, 0),
         // 视角
         pitch: Cesium.Math.toRadians(-10),
@@ -209,7 +205,7 @@ export default class ViewShed {
     tileset.style = new Cesium.Cesium3DTileStyle({
       color: {
         conditions: [
-        // ['${Height} >= 84', 'rgba(45, 0, 75, 0.5)'],
+          // ['${Height} >= 84', 'rgba(45, 0, 75, 0.5)'],
           ['true', 'rgb(198, 106, 11)']
         ]
       }
